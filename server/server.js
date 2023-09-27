@@ -118,7 +118,7 @@ if (cluster.isMaster) {
     }
   });
 
-  app.get("/admin", verifyToken, async (req, res) => {
+  app.get("/users", verifyToken, async (req, res) => {
     if (req.user.accountType !== "admin") {
       return res
         .status(403)
@@ -130,7 +130,52 @@ if (cluster.isMaster) {
       const users = await collection.find().toArray();
       res.json(users);
     } catch (err) {
-      console.error("Error in /admin", err);
+      console.error("Error in /users", err);
+      res.status(500).send("Server error");
+    }
+  });
+
+  // Update user details
+  app.put("/users/:id", verifyToken, async (req, res) => {
+    if (req.user.accountType !== "admin") {
+      return res
+        .status(403)
+        .send("Access denied. Only admins can update user details.");
+    }
+
+    const userId = req.params.id;
+    const { username, password, accountType } = req.body;
+
+    try {
+      const collection = client.db(dbName).collection(collectionName);
+      const hashedPassword = await bcrypt.hash(password, 10);
+      await collection.updateOne(
+        { _id: userId },
+        { $set: { username, password: hashedPassword, accountType } }
+      );
+      res.status(200).send("User details updated successfully.");
+    } catch (err) {
+      console.error("Error updating user details", err);
+      res.status(500).send(`Server error: ${err.message}`);
+    }
+  });
+
+  // Delete a user
+  app.delete("/users/:id", verifyToken, async (req, res) => {
+    if (req.user.accountType !== "admin") {
+      return res
+        .status(403)
+        .send("Access denied. Only admins can delete users.");
+    }
+
+    const userId = req.params.id;
+
+    try {
+      const collection = client.db(dbName).collection(collectionName);
+      await collection.deleteOne({ _id: userId });
+      res.status(200).send("User deleted successfully.");
+    } catch (err) {
+      console.error("Error deleting user", err);
       res.status(500).send("Server error");
     }
   });

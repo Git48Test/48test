@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom"; // Import useNavigate hook from react-router-dom
-import Admin from "./Admin";
 
 function Login() {
   const [formData, setFormData] = useState({
@@ -34,9 +33,9 @@ function Login() {
 
         // Redirect based on account type
         if (data.accountType === "admin") {
-          navigate(<Admin />); // Use navigate to redirect to admin page
+          navigate("/admin"); // Redirect to admin page
         } else {
-          navigate("/home"); // Use navigate to redirect to user home page
+          navigate("/user"); // Redirect to user home page
         }
       } else {
         setMessage(data.message);

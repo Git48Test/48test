@@ -3,6 +3,8 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Register from "./components/Register";
 import Login from "./components/Login";
 import Admin from "./components/Admin";
+import User from "./components/User";
+
 import "./App.css";
 
 function App() {
@@ -10,10 +12,10 @@ function App() {
     <Router>
       <div className="App">
         <Routes>
+          <Route path="/" element={<Login />} />
           <Route path="/register" element={<Register />} />
-          <Route path="/login" element={<Login />} />
           <Route path="/admin" element={<Admin />} />
-          {/* Add more routes as needed */}
+          <Route path="/user" element={<User />} />
         </Routes>
       </div>
     </Router>
